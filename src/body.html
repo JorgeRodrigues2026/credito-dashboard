@@ -1,0 +1,443 @@
+<nav class="nav" aria-label="Capítulos">
+  <div class="wrap">
+    <a class="brand" href="#inicio">
+      <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#0f6b4f"/><path d="M8 22h16M10 22V13m4 9v-9m4 9v-9m4 9v-9M7 12l9-5 9 5z" stroke="#fff" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>
+      CreditAI MLOps
+    </a>
+    <div class="nav-links">
+      <a href="#problema">Problema</a>
+      <a href="#pipeline">Modelo</a>
+      <a href="#api">API</a>
+      <a href="#simulador">Simulador</a>
+      <a href="#laboratorio">Laboratório</a>
+      <a href="#desempenho">Desempenho</a>
+      <a href="#dados">Dados</a>
+      <a href="#latencia">Latência</a>
+      <a href="#entrega">Entrega</a>
+    </div>
+    <div class="tools">
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="Alternar tema claro ou escuro" title="Alternar tema">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="icon-btn present-btn" id="presentBtn" type="button" title="Modo apresentação (tecla P)">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4v16l13-8z"/></svg><span class="lbl">Apresentar</span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ================= INÍCIO ================= -->
+<header class="hero" id="inicio" data-slide>
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">Projeto Avaliativo · Módulo 2 · <b>SCTEC</b></div>
+      <h1>Crédito decidido em <em>milissegundos</em>, com regras claras.</h1>
+      <p class="lede">Um modelo de Machine Learning que avalia pedidos de empréstimo, servido por uma API REST em FastAPI e operado por um painel em Streamlit. Do notebook à produção, com validação, testes e versionamento.</p>
+      <div class="cta">
+        <a class="btn primary" href="#simulador">Simular um cliente</a>
+        <a class="btn ghost" href="#api">Ver a API em ação</a>
+      </div>
+      <div class="kpis" id="heroKpis" aria-label="Indicadores do projeto"></div>
+    </div>
+    <div>
+      <article class="parecer" id="parecer" aria-live="polite">
+        <div class="par-head"><b>PARECER DE CRÉDITO</b><span id="parId">nº 0001</span></div>
+        <dl class="par-rows" id="parRows"></dl>
+        <div class="scorebar" aria-hidden="true"><div class="mk" id="parMk" style="left:76%"><span>720</span></div></div>
+        <div class="scale-l"><span>300</span><span>Score de crédito</span><span>850</span></div>
+        <div class="par-dec"><div class="l">Probabilidade de aprovação<b id="parProb">95,7%</b></div><div class="stamp aprovado" id="parStamp">Aprovado<small>Baixo Risco</small></div></div>
+        <div class="par-req" id="parReq">POST /predict → 200 OK</div>
+        <div class="par-foot"><span>Calculado agora, no seu navegador, pelo modelo treinado.</span><div class="dots-nav" id="parDots" role="group" aria-label="Exemplos de pareceres"></div></div>
+      </article>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ================= PROBLEMA ================= -->
+<section id="problema" data-slide>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">O problema de negócio</div>
+      <h2>Fila de análise manual não escala. Modelo preso em notebook também não.</h2>
+      <p class="lede">Bancos, cooperativas e fintechs recebem milhares de pedidos de empréstimo. Decidir caso a caso gera espera e critérios diferentes entre analistas. O CreditAI coloca o modelo atrás de uma API que qualquer sistema consegue chamar.</p>
+    </div>
+    <div class="ba">
+      <div class="panel">
+        <h3><span class="tag bad">Antes</span> Análise manual</h3>
+        <ul>
+          <li>Cada pedido espera um analista disponível.</li>
+          <li>Dois analistas podem decidir diferente para o mesmo perfil.</li>
+          <li>Erros de cadastro só aparecem depois da decisão.</li>
+          <li>O modelo existe, mas só roda dentro do notebook do cientista de dados.</li>
+        </ul>
+      </div>
+      <div class="arrow" aria-hidden="true">→</div>
+      <div class="panel">
+        <h3><span class="tag ok">Depois</span> CreditAI MLOps</h3>
+        <ul>
+          <li><b>Mesmo critério</b> para todos: um pipeline treinado e versionado.</li>
+          <li><b>Resposta imediata</b> via <code>POST /predict</code>, com probabilidade e faixa de risco.</li>
+          <li><b>Dados inválidos barrados</b> na entrada (422) e incoerências de cadastro sinalizadas (400).</li>
+          <li><b>Analista no comando</b>: o painel Streamlit mostra a decisão e o porquê dos números.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PIPELINE ================= -->
+<section id="pipeline" class="alt" data-slide>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Fase 1 · Preparação do modelo</div>
+      <h2>Um pipeline único, do dado cru ao arquivo <code>.joblib</code></h2>
+      <p class="lede">Pré-processamento e classificador ficam no mesmo objeto. A API recebe os campos do cliente como chegam e o pipeline cuida de imputar, padronizar e codificar.</p>
+    </div>
+    <div class="flow">
+      <div class="step"><span class="n">1</span><b>Base</b><span>3.000 clientes, 8 variáveis, 43% aprovados</span></div>
+      <div class="step"><span class="n">2</span><b>Divisão</b><span>70 / 15 / 15, estratificada antes de tudo</span></div>
+      <div class="step"><span class="n">3</span><b>Numéricas</b><span>mediana + StandardScaler</span></div>
+      <div class="step"><span class="n">4</span><b>Categóricas</b><span>moda + OneHotEncoder</span></div>
+      <div class="step"><span class="n">5</span><b>Random Forest</b><span>200 árvores, profundidade 10, classes balanceadas</span></div>
+      <div class="step final"><span class="n">6</span><b>Artefato</b><span>modelo_emprestimo.joblib + métricas em JSON</span></div>
+    </div>
+    <div class="grid-2">
+      <div class="panel">
+        <h3>Divisão sem vazamento de dados</h3>
+        <p class="sub">A separação acontece antes de qualquer cálculo estatístico. Imputação e escala aprendem só com o treino.</p>
+        <div class="splitbar" aria-label="Treino 2.100, validação 450, teste 450">
+          <div class="tr" style="flex:70">Treino · 2.100</div><div class="va" style="flex:15">15%</div><div class="te" style="flex:15">15%</div>
+        </div>
+        <div class="legend"><span><i style="background:var(--brand)"></i>Treino 70%: ajusta o modelo</span><span><i style="background:var(--gold)"></i>Validação 450: compara versões</span><span><i style="background:var(--ink)"></i>Teste 450: nota final</span></div>
+        <h3 style="margin-top:22px">Valores ausentes tratados</h3>
+        <p class="sub">A base tem lacunas de propósito, como na vida real. O pipeline preenche sem descartar clientes.</p>
+        <div class="chips" id="nullChips"></div>
+      </div>
+      <div class="panel">
+        <h3>Decisões técnicas</h3>
+        <ul class="ticks">
+          <li><b>Mediana nas numéricas:</b> resiste a rendas muito altas, que puxariam a média.</li>
+          <li><b><code>handle_unknown="ignore"</code>:</b> uma categoria nova em produção não derruba a API.</li>
+          <li><b><code>class_weight="balanced"</code>:</b> compensa os 57% de reprovados na base.</li>
+          <li><b>Artefato com metadados:</b> versão, algoritmo e métricas de teste viajam junto com o modelo.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= API EM AÇÃO ================= -->
+<section id="api" data-slide>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Fases 2 a 5 · FastAPI e REST</div>
+      <h2>Acompanhe uma requisição atravessando a API</h2>
+      <p class="lede">Escolha um cenário. O pedido passa pelas mesmas camadas do código: rota, validação Pydantic, regras de negócio no serviço e modelo carregado na memória. Cada camada pode devolver um status diferente.</p>
+    </div>
+    <div class="scen-btns" role="group" aria-label="Cenários">
+      <button type="button" class="sbtn" data-flow="aprovado" aria-pressed="true"><i class="s200">200</i> Cliente aprovado</button>
+      <button type="button" class="sbtn" data-flow="reprovado" aria-pressed="false"><i class="s200">200</i> Cliente reprovado</button>
+      <button type="button" class="sbtn" data-flow="invalido" aria-pressed="false"><i class="s422">422</i> Dados inválidos</button>
+      <button type="button" class="sbtn" data-flow="regra" aria-pressed="false"><i class="s400">400</i> Cadastro incoerente</button>
+    </div>
+    <div class="pipe" id="pipe">
+      <div class="node" data-node="0"><div class="ic">{ }</div><b>Cliente</b><span>Streamlit, cURL ou outro sistema</span></div>
+      <div class="node" data-node="1"><div class="ic">⇢</div><b>Rota</b><span><code>POST /predict</code></span></div>
+      <div class="node" data-node="2"><div class="ic">✓</div><b>Pydantic</b><span>tipos e limites<br><code>422</code></span></div>
+      <div class="node" data-node="3"><div class="ic">§</div><b>Serviço</b><span>regras de negócio<br><code>400</code></span></div>
+      <div class="node" data-node="4"><div class="ic">RF</div><b>Modelo em RAM</b><span>200 árvores<br><code>predict_proba</code></span></div>
+      <div class="node" data-node="5"><div class="ic">↩</div><b>Resposta</b><span>JSON tipado<br><code>200</code></span></div>
+      <div class="packet" id="packet" aria-hidden="true"></div>
+    </div>
+    <div class="narr" id="flowNarr" aria-live="polite"></div>
+    <div class="io">
+      <div><h4>Requisição <span class="pill s200" id="flowMethod">POST /predict</span></h4><pre class="code" id="flowReq"></pre></div>
+      <div><h4>Resposta <span class="pill" id="flowStatus"></span></h4><pre class="code" id="flowRes"></pre></div>
+    </div>
+    <div class="lifespan" aria-label="Ciclo de vida da API">
+      <div class="ls-box"><b>startup · lifespan</b>joblib.load() 1 vez</div>
+      <div class="ls-reqs" id="lsReqs" aria-hidden="true"></div>
+      <div class="ls-box"><b>shutdown</b>libera a memória</div>
+    </div>
+    <p class="muted" style="font-size:14px;margin:10px 0 0">O <code>@asynccontextmanager</code> carrega o modelo uma única vez no início. Cada barra acima é uma requisição atendida com o modelo já na memória, sem ler o disco.</p>
+  </div>
+</section>
+
+<!-- ================= SIMULADOR ================= -->
+<section id="simulador" class="alt" data-slide>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Experimente · <b>POST /predict</b></div>
+      <h2>Simulador de crédito</h2>
+      <p class="lede">Mude os dados e veja a decisão mudar na hora. O Random Forest treinado roda aqui, exportado para JavaScript: nas 3.000 linhas da base, as probabilidades batem com o Python até a 15ª casa decimal.</p>
+    </div>
+    <div class="engine">
+      <div class="seg" role="radiogroup" aria-label="Onde calcular">
+        <input type="radio" name="engine" id="engLocal" value="local" checked><label for="engLocal">Modelo no navegador</label>
+        <input type="radio" name="engine" id="engRemote" value="remote"><label for="engRemote">API FastAPI real</label>
+      </div>
+      <div class="api-url" id="apiUrlBox" hidden>
+        <input type="url" id="apiUrl" value="http://127.0.0.1:8000" aria-label="URL da API" spellcheck="false">
+        <button class="btn-s" type="button" id="apiConnect">Conectar</button>
+      </div>
+      <div class="status-dot" id="apiStatus" role="status" aria-live="polite"><span>Verificando…</span></div>
+    </div>
+    <div class="sim">
+      <form id="simForm" novalidate>
+        <div class="presets">
+          <button type="button" class="sbtn" data-preset="carlos">Carlos · bom pagador</button>
+          <button type="button" class="sbtn" data-preset="roberto">Roberto · alto risco</button>
+          <button type="button" class="sbtn" data-preset="ana">Ana · empresária</button>
+          <button type="button" class="sbtn" data-preset="random">Cliente real da base</button>
+        </div>
+        <div class="field"><label for="f_nome">Nome do solicitante</label><input type="text" id="f_nome" name="nome_cliente" maxlength="80"></div>
+        <div class="field"><div class="top"><label for="f_score">Score de crédito</label><output id="o_score"></output></div><input type="range" id="f_score" name="pontuacao_credito" min="300" max="850" step="5"></div>
+        <div class="row">
+          <div class="field"><div class="top"><label for="f_idade">Idade</label><output id="o_idade"></output></div><input type="range" id="f_idade" name="idade" min="18" max="100" step="1"></div>
+          <div class="field"><div class="top"><label for="f_tempo">Tempo de emprego (anos)</label><output id="o_tempo"></output></div><input type="range" id="f_tempo" name="tempo_emprego_anos" min="0" max="40" step="0.5"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label for="f_renda">Renda mensal (R$)</label><input type="number" id="f_renda" name="renda_mensal" min="100" max="1000000" step="100"></div>
+          <div class="field"><label for="f_valor">Valor do empréstimo (R$)</label><input type="number" id="f_valor" name="valor_emprestimo" min="500" max="500000" step="500"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label for="f_moradia">Moradia</label><select id="f_moradia" name="tipo_moradia"></select></div>
+          <div class="field"><label for="f_final">Finalidade</label><select id="f_final" name="finalidade_emprestimo"></select></div>
+        </div>
+        <div class="field"><span>Inadimplência anterior</span>
+          <div class="toggle" role="group" aria-label="Inadimplência anterior"><button type="button" data-inad="0" aria-pressed="true">Não</button><button type="button" data-inad="1" aria-pressed="false">Sim</button></div>
+        </div>
+      </form>
+      <div class="result" id="simResult" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LABORATÓRIO ================= -->
+<section id="laboratorio" data-slide>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Fase 5 · Status HTTP</div>
+      <h2>Laboratório REST: tente quebrar a API</h2>
+      <p class="lede">Escolha um cenário ou escreva o seu JSON. A resposta segue o contrato da FastAPI: <b>200</b> decisão, <b>422</b> validação do Pydantic, <b>400</b> regra de negócio, <b>404</b> e <b>405</b> rota ou método errado. Cada cenário pronto mostra também o que a API real devolveu quando a testamos.</p>
+    </div>
+    <div class="lab">
+      <form id="labForm">
+        <div class="field"><label for="labPreset">Cenário pronto</label><select id="labPreset"></select></div>
+        <div class="req-line">
+          <select id="labMethod" aria-label="Método HTTP"><option>GET</option><option>POST</option></select>
+          <input type="text" id="labPath" class="mono" aria-label="Rota" spellcheck="false">
+        </div>
+        <div class="field" id="labBodyWrap"><label for="labBody">Corpo da requisição (JSON)</label><textarea id="labBody" spellcheck="false"></textarea></div>
+        <div class="actions"><button type="submit" class="btn-s primary">Enviar requisição</button><button type="button" class="btn-s" id="labFormat">Formatar JSON</button></div>
+      </form>
+      <div id="labOut" aria-live="polite"><div class="empty">A resposta aparece aqui.</div></div>
+    </div>
+    <div style="margin-top:32px">
+      <div class="resp-head"><h3>Bateria completa: navegador × API real</h3><button type="button" class="btn-s" id="labAll">Executar os 13 cenários</button></div>
+      <div class="score-line" id="labScore"></div>
+      <div class="tbl-scroll"><table class="data-table" id="labTable"><tbody><tr><td class="muted">Clique em "Executar os 13 cenários".</td></tr></tbody></table></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DESEMPENHO ================= -->
+<section id="desempenho" class="alt" data-slide>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Fase 1 · Avaliação</div>
+      <h2>9 em cada 10 decisões certas em clientes que o modelo nunca viu</h2>
+      <p class="lede">Métricas recalculadas com as versões fixadas no <code>requirements.txt</code> (scikit-learn 1.5.2). O conjunto de teste, com 450 clientes, só foi usado no final.</p>
+    </div>
+    <div class="grid-2">
+      <div class="panel">
+        <h3>Métricas por partição</h3>
+        <div class="tbl-scroll"><table class="metrics-tbl" id="metricsTbl"></table></div>
+        <p class="callout" id="gapNote"></p>
+      </div>
+      <div class="panel">
+        <h3>Curva ROC no teste</h3>
+        <p class="sub">Quanto mais a curva encosta no canto superior esquerdo, melhor o modelo separa bons e maus pagadores.</p>
+        <div id="rocChart"></div>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:24px">
+      <h3>Política de crédito: mova o limiar de aprovação</h3>
+      <p class="sub">A API aprova quando a probabilidade passa de 50%. Um banco mais conservador pode exigir mais. Veja o efeito nos 450 clientes de teste.</p>
+      <div class="field" style="max-width:520px"><div class="top"><label for="thr">Aprovar a partir de</label><output id="thrOut"></output></div><input type="range" id="thr" min="0.05" max="0.95" step="0.01" value="0.5"></div>
+      <div class="thr-box">
+        <div class="cm" id="thrCm"></div>
+        <div>
+          <div class="thr-stats" id="thrStats"></div>
+          <p class="callout" id="thrNote" style="margin-top:12px"></p>
+        </div>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:24px">
+      <h3>O que mais pesa na decisão</h3>
+      <p class="sub">Importância por permutação: quanto a ROC-AUC do teste cai quando embaralhamos cada variável (15 repetições).</p>
+      <div id="impChart"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DADOS ================= -->
+<section id="dados" data-slide>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Leitura de negócio</div>
+      <h2>O que a base de 3.000 clientes conta</h2>
+      <p class="lede">Taxa de aprovação real por grupo. São esses padrões que o modelo aprendeu.</p>
+    </div>
+    <div class="tabs" role="tablist" id="rateTabs" aria-label="Agrupar por">
+      <button class="tab" role="tab" data-rate="faixa_score" aria-selected="true">Faixa de score</button>
+      <button class="tab" role="tab" data-rate="comprometimento" aria-selected="false">Comprometimento da renda</button>
+      <button class="tab" role="tab" data-rate="inadimplencia" aria-selected="false">Inadimplência anterior</button>
+      <button class="tab" role="tab" data-rate="moradia" aria-selected="false">Moradia</button>
+      <button class="tab" role="tab" data-rate="finalidade" aria-selected="false">Finalidade</button>
+      <button class="tab" role="tab" data-rate="faixa_idade" aria-selected="false">Idade</button>
+    </div>
+    <div class="grid-2">
+      <div class="panel"><h3 id="rateTitle">Aprovação por faixa de score</h3><div id="rateChart"></div><p class="callout" id="rateNote"></p></div>
+      <div class="panel"><h3>Distribuição do score por decisão</h3><p class="sub">Clientes aprovados se concentram acima de 650 pontos.</p><div id="scoreHist"></div>
+        <div class="legend"><span><i style="background:var(--brand)"></i>Aprovados</span><span><i style="background:var(--bad)"></i>Reprovados</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LATÊNCIA ================= -->
+<section id="latencia" class="alt" data-slide>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Performance medida</div>
+      <h2>A API responde, e dá para ficar 13× mais rápida</h2>
+      <p class="lede">Medimos 500 chamadas reais a <code>POST /predict</code> com Uvicorn local, numa máquina de 2 CPUs. O gargalo não é o modelo: é o <code>n_jobs=-1</code>, que abre threads a cada predição de uma linha só.</p>
+    </div>
+    <div class="grid-2">
+      <div class="panel"><h3>Tempo de resposta de 500 requisições</h3><div id="latChart"></div><div class="score-line" id="latStats"></div></div>
+      <div class="panel"><h3>Otimização testada</h3><p class="sub">Tempo de inferência por cliente, mediana de 200 execuções.</p><div id="optChart"></div>
+<pre class="code"><code><span class="c"># credito_service.py: 1 chamada em vez de 2</span>
+<span class="del">- resultado_classe = int(self._pipeline.predict(dados)[0])</span>
+<span class="del">- probabilidades = self._pipeline.predict_proba(dados)[0]</span>
+<span class="add">+ probabilidades = self._pipeline.predict_proba(dados)[0]</span>
+<span class="add">+ resultado_classe = int(probabilidades[1] &gt; probabilidades[0])</span>
+
+<span class="c"># no lifespan, depois de carregar o modelo</span>
+<span class="add">+ pipeline.named_steps["classificador"].set_params(n_jobs=1)</span></code></pre></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STREAMLIT ================= -->
+<section id="streamlit" data-slide>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Interface do analista</div>
+      <h2>O painel Streamlit do projeto, rodando contra a API</h2>
+      <p class="lede">Capturas reais do <code>dashboard.py</code> do notebook, com a API FastAPI no ar. O painel só conversa com o modelo por HTTP, como qualquer outro cliente da API.</p>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Telas do Streamlit">
+      <button class="tab" role="tab" data-shot="0" aria-selected="true">Simulador</button>
+      <button class="tab" role="tab" data-shot="1" aria-selected="false">Laboratório 422</button>
+      <button class="tab" role="tab" data-shot="2" aria-selected="false">Métricas</button>
+    </div>
+    <div class="shot"><img id="shotImg" src="assets/st_simulador.webp" width="1600" height="1000" alt="Painel Streamlit: simulador de crédito aprovando Carlos com 95,7% de chance"></div>
+    <p class="cap" id="shotCap"></p>
+  </div>
+</section>
+
+<!-- ================= ENTREGA ================= -->
+<section id="entrega" class="alt" data-slide>
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="eyebrow">Engenharia e entrega</div>
+      <h2>Organizado em camadas, testado e versionado</h2>
+    </div>
+    <div class="grid-3">
+      <div class="panel">
+        <h3>Estrutura</h3>
+<pre class="tree"><span class="d">credito-ml-api/</span>
+├─ <span class="d">app/</span>
+│  ├─ schemas/cliente.py   <span class="c">422</span>
+│  ├─ services/credito_service.py <span class="c">400</span>
+│  └─ routers/predict_routes.py
+├─ main.py      <span class="c">lifespan</span>
+├─ train_pipeline.py
+├─ dashboard.py <span class="c">Streamlit</span>
+├─ tests/test_api.py
+├─ data/  models/
+└─ requirements.txt</pre>
+      </div>
+      <div class="panel">
+        <h3>GitFlow</h3>
+        <div class="gitflow">
+          <div class="lane"><span class="name">main</span><span class="bar"></span></div>
+          <div class="lane dev"><span class="name">develop</span><span class="bar"></span></div>
+          <div class="feats">
+            <div>feature/fase1-pipeline-ml</div>
+            <div>feature/fase4-schemas-pydantic</div>
+            <div>feature/fase2-3-service-lifespan</div>
+            <div>feature/fase5-endpoints-dashboard</div>
+          </div>
+        </div>
+        <p class="muted" style="font-size:14px">Merge com <code>--no-ff</code>, sem apagar as features.</p>
+      </div>
+      <div class="panel">
+        <h3>Testes automatizados <span class="tag ok">6 / 6</span></h3>
+        <ul class="ticks tests">
+          <li>/health com modelo em RAM</li>
+          <li>/predict aprova Ana</li>
+          <li>/v1/predict reprova Roberto</li>
+          <li>contrato mínimo (idade + score)</li>
+          <li>422 com idade 15 e score 950</li>
+          <li>400 com 15 anos de emprego aos 20</li>
+        </ul>
+      </div>
+    </div>
+    <div class="grid-2" style="margin-top:24px">
+<pre class="code"><button class="copy" type="button">Copiar</button><code><span class="c"># 1. ambiente</span>
+python -m venv .venv &amp;&amp; source .venv/bin/activate
+pip install -r requirements.txt
+
+<span class="c"># 2. treino (Fase 1)</span>
+python train_pipeline.py
+
+<span class="c"># 3. API → http://127.0.0.1:8000/docs</span>
+uvicorn main:app --reload
+
+<span class="c"># 4. painel → http://localhost:8501</span>
+streamlit run dashboard.py
+
+<span class="c"># 5. testes</span>
+pytest -v</code></pre>
+      <div class="panel">
+        <h3>Próximos passos</h3>
+        <ul class="ticks">
+          <li>Aplicar a otimização de latência (<code>n_jobs=1</code>, uma chamada só).</li>
+          <li>Reduzir a diferença entre treino e teste com <code>max_depth</code> e <code>min_samples_leaf</code> maiores.</li>
+          <li>Explicar cada decisão ao cliente com SHAP.</li>
+          <li>Monitorar a deriva dos dados e versionar modelos com MLflow.</li>
+          <li>Empacotar em Docker e publicar a API em nuvem.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><b>CreditAI MLOps</b> · credito-ml-api · Projeto Avaliativo SCTEC · Módulo 2, Semana 13</div>
+    <div>Jorge Luiz Susin Rodrigues · <a href="https://github.com/JorgeRodrigues2026" target="_blank" rel="noopener">github.com/JorgeRodrigues2026</a></div>
+  </div>
+</footer>
+
+<div class="slide-hud" id="hud" aria-label="Controles da apresentação">
+  <button type="button" id="hudPrev" aria-label="Slide anterior">‹</button>
+  <span id="hudCount">1 / 10</span>
+  <button type="button" id="hudNext" aria-label="Próximo slide">›</button>
+  <button type="button" id="hudExit" aria-label="Sair do modo apresentação">✕</button>
+</div>
