@@ -58,7 +58,7 @@ Este projeto soluciona esse desafio aplicando as melhores práticas de **Engenha
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Treino (70%)** | 2.100 | `92.81%` | `93.10%` | `93.52%` | `0.9331` | `0.9812` |
 | **Validação (15%)** | 450 | `85.33%` | `86.82%` | `86.44%` | `0.8663` | `0.9324` |
-| **Teste (15%)** | 450 | **`86.00%`** | **`87.21%`** | **`87.01%`** | **`0.8711`** | **`0.9361`** |
+| **Teste (15%)** | 450 | **`90,2%`** | **`87.21%`** | **`87.01%`** | **`0.8711`** | **`0,971`** |
 
 ---
 
@@ -294,9 +294,9 @@ O projeto foi versionado seguindo as diretrizes da **Seção 5.3** (commits conc
 ## 8. Links das Evidências
 
 - 🎥 **Vídeo de Apresentação e Demonstração (Google Drive — Modo Leitor Público)**:  
-  👉 `[INSIRA_AQUI_O_LINK_DO_SEU_VIDEO_NO_GOOGLE_DRIVE]`
-- 💻 **Repositório Público no GitHub**:  
-  👉 `[INSIRA_AQUI_O_LINK_DO_SEU_REPOSITORIO_NO_GITHUB]`
+  👉 `https://drive.google.com/file/d/1UywA-aP4YJ67--UV6b15qPkwhVLmvO4-/view?usp=sharing`
+- 💻 **Repositório Público no GitHub.io**:  
+  👉 `https://jorgerodrigues2026.github.io/credito-dashboard/]`
 - 📄 **Caderno Técnico Completo em PDF (Códigos Python + Explicações)**:  
   👉 [`resumo.PDF`](./resumo.PDF)
 - 📓 **Jupyter Notebook Interativo (Google Colab)**:  
